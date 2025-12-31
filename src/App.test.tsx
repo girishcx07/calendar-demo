@@ -7,8 +7,4 @@ describe("App", () => {
     render(<App />);
     expect(screen.getByText("Calendar Demo")).toBeInTheDocument();
   });
-
-  it("true is truthy", () => {
-    expect(true).toBeTruthy();
-  });
 });
