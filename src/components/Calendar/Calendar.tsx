@@ -10,6 +10,7 @@ import {
   isSameDay,
   addMonths,
   subMonths,
+  isValid,
 } from "date-fns";
 import clsx from "clsx";
 import styles from "./Calendar.module.css";
@@ -21,15 +22,18 @@ interface CalendarProps {
 }
 
 export const Calendar: React.FC<CalendarProps> = ({ date, onChange }) => {
+  // Use current date as fallback if the provided date is invalid
+  const safeDate = isValid(date) ? date : new Date();
+
   const handlePrevMonth = () => {
     if (onChange) {
-      onChange(subMonths(date, 1));
+      onChange(subMonths(safeDate, 1));
     }
   };
 
   const handleNextMonth = () => {
     if (onChange) {
-      onChange(addMonths(date, 1));
+      onChange(addMonths(safeDate, 1));
     }
   };
 
@@ -39,8 +43,8 @@ export const Calendar: React.FC<CalendarProps> = ({ date, onChange }) => {
     }
   };
 
-  const monthStart = startOfMonth(date); // get month start date 01-10-2025
-  const monthEnd = endOfMonth(date); // get month end date 30-10-2025
+  const monthStart = startOfMonth(safeDate); // get month start date 01-10-2025
+  const monthEnd = endOfMonth(safeDate); // get month end date 30-10-2025
   const startDate = startOfWeek(monthStart); // get week start date 26-09-2025
   const endDate = endOfWeek(monthEnd); // get week end date 06-12-2025
 
@@ -71,7 +75,7 @@ export const Calendar: React.FC<CalendarProps> = ({ date, onChange }) => {
         >
           <ChevronLeftIcon />
         </button>
-        <span>{format(date, "MMMM yyyy")}</span>
+        <span>{format(safeDate, "MMMM yyyy")}</span>
         <button
           onClick={handleNextMonth}
           className={styles.navButton}
@@ -92,12 +96,12 @@ export const Calendar: React.FC<CalendarProps> = ({ date, onChange }) => {
             onClick={() => handleDateClick(day)}
             className={clsx(styles.calendarCell, {
               [styles.otherMonth]: !isSameMonth(day, monthStart),
-              [styles.selected]: isSameDay(day, date),
+              [styles.selected]: isSameDay(day, safeDate),
               [styles.interactive]: !!onChange,
             })}
             disabled={!onChange || !isSameMonth(day, monthStart)}
             data-testid={
-              isSameDay(day, date) ? "selected-date" : "calendar-cell" // testid for selected date
+              isSameDay(day, safeDate) ? "selected-date" : "calendar-cell" // testid for selected date
             }
           >
             {isSameMonth(day, monthStart) ? format(day, "d") : ""}

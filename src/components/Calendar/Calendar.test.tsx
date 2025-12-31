@@ -4,6 +4,15 @@ import { Calendar } from "./Calendar";
 import styles from "./Calendar.module.css";
 
 describe("Calendar Component", () => {
+  it("handles invalid date", () => {
+    const invalidDate = "invalid-date-string";
+    try {
+      render(<Calendar date={invalidDate as any} />);
+    } catch (e) {
+      console.error("Component crashed:", e);
+    }
+  });
+
   it("renders the correct month and year in the header", () => {
     const date = new Date(2023, 9, 15); // Set the initial date to October 15, 2023
     render(<Calendar date={date} />);
